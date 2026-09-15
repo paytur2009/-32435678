@@ -2,11 +2,12 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Важливе питання ✨</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Особливе запрошення на вальс ✨</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
         * {
@@ -15,193 +16,258 @@
             padding: 0;
             user-select: none;
             -webkit-user-select: none;
-        }
-
-        :root {
-            --glow-x: 50%;
-            --glow-y: 50%;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Comfortaa', cursive, sans-serif;
-            background: radial-gradient(circle at var(--glow-x) var(--glow-y), #2e1065 0%, #0f172a 70%, #020617 100%);
+            font-family: 'Outfit', sans-serif;
+            background: #070913;
+            background-image: 
+                radial-gradient(at 15% 15%, rgba(168, 85, 247, 0.22) 0px, transparent 45%),
+                radial-gradient(at 85% 85%, rgba(236, 72, 153, 0.18) 0px, transparent 45%),
+                radial-gradient(at 50% 50%, rgba(11, 15, 28, 1) 0px, transparent 100%);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            text-align: center;
-            position: relative;
-            color: #ffffff;
-            perspective: 1000px;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            overflow-x: hidden;
+            color: #f8fafc;
+            padding: 16px;
+        }
+
+        html {
+            height: -webkit-fill-available;
         }
 
         .sparkles-bg {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            z-index: 1;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
         }
 
-        .floating-sparkle {
+        .star {
             position: absolute;
-            bottom: -50px;
-            color: rgba(168, 85, 247, 0.5);
-            filter: blur(0.5px) drop-shadow(0 0 10px rgba(168, 85, 247, 0.7));
-            animation: floatUp 6s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: pulseStar var(--duration) infinite ease-in-out alternate;
+            will-change: transform, opacity;
         }
 
-        @keyframes floatUp {
-            0% {
-                transform: translateY(0) rotate(0deg) scale(0.5);
-                opacity: 0;
-            }
-            20% { opacity: 0.9; }
-            80% { opacity: 0.4; }
-            100% {
-                transform: translateY(-115vh) rotate(360deg) scale(1.3);
-                opacity: 0;
-            }
+        @keyframes pulseStar {
+            0% { opacity: 0.1; transform: scale(0.8); }
+            100% { opacity: 0.7; transform: scale(1.3); }
         }
 
         .card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02));
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            padding: clamp(30px, 5vw, 55px) clamp(20px, 4vw, 35px);
-            border-radius: 45px;
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.75),
-                        inset 0 1px 0 rgba(255,255,255,0.3),
-                        0 0 50px rgba(168, 85, 247, 0.15);
-            max-width: 500px;
-            width: 92%;
+            background: rgba(18, 22, 38, 0.65);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: clamp(28px, 6vw, 42px) clamp(20px, 5vw, 32px);
+            border-radius: 36px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+            width: 100%;
+            max-width: 420px;
             z-index: 2;
-            transform-style: preserve-3d;
-            transition: transform 0.5s ease, box-shadow 0.5s ease, border-color 0.5s ease;
+            text-align: center;
+            position: relative;
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
-        .card-content {
-            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            background: rgba(168, 85, 247, 0.12);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 20px;
+            font-size: 13px;
+            color: #d8b4fe;
+            font-weight: 600;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
         }
 
         h1 {
-            font-size: clamp(22px, 5vw, 28px);
-            line-height: 1.5;
+            font-family: 'Comfortaa', cursive;
+            font-size: clamp(21px, 5.5vw, 25px);
+            line-height: 1.35;
             font-weight: 700;
-            background: linear-gradient(135deg, #ffffff 20%, #c084fc 60%, #ffd700 100%);
+            background: linear-gradient(135deg, #ffffff 20%, #f3e8ff 60%, #f472b6 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 2px 15px rgba(0,0,0,0.5));
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        .escape-counter {
+            font-size: 13px;
+            color: #fde047;
+            margin-top: 12px;
+            min-height: 20px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .auth-form {
+            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .input-group {
+            position: relative;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: #cbd5e1;
+            margin-bottom: 6px;
+            margin-left: 12px;
+            font-weight: 600;
+        }
+
+        .auth-form input {
+            width: 100%;
+            padding: 16px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(11, 15, 25, 0.7);
+            color: #ffffff;
+            font-size: 16px; /* Запобігає авто-зуму в iOS Safari */
+            font-family: 'Outfit', sans-serif;
+            outline: none;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .auth-form input:focus {
+            border-color: #c084fc;
+            box-shadow: 0 0 20px rgba(192, 132, 252, 0.25);
+            background: rgba(11, 15, 25, 0.9);
+        }
+
+        .auth-form input::placeholder {
+            color: #64748b;
+        }
+
+        .auth-btn, .send-action-btn {
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            color: #ffffff;
+            padding: 16px clamp(20px, 4vw, 30px);
+            border-radius: 24px;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            box-shadow: 0 10px 25px rgba(168, 85, 247, 0.35);
+            margin-top: 8px;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            width: 100%;
+        }
+
+        .auth-btn:disabled, .send-action-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
         }
 
         .buttons-sandbox {
             position: relative;
             width: 100%;
-            height: 380px;
-            margin-top: 25px;
+            height: 300px;
+            margin-top: 18px;
+            border-radius: 24px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px dashed rgba(255, 255, 255, 0.12);
+            overflow: hidden;
         }
 
         button.option-btn {
-            padding: 16px 42px;
-            font-size: 19px;
+            padding: 14px 28px;
+            font-size: 15px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             font-weight: 700;
-            font-family: 'Comfortaa', cursive, sans-serif;
+            font-family: 'Outfit', sans-serif;
             position: absolute;
             white-space: nowrap;
-            outline: none;
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
-            transition: left 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), 
-                        top 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), 
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+            transform-origin: center center;
+            transition: left 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                        top 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), 
                         transform 0.2s ease-out;
+            will-change: left, top, transform;
+            touch-action: manipulation;
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         #yesBtn {
-            background: linear-gradient(135deg, #ffd700, #f59e0b);
-            color: #0f172a;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
             z-index: 10;
+            animation: softPulse 2s infinite ease-in-out;
         }
 
-        #yesBtn::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: 50px;
-            box-shadow: 0 0 25px #ffd700;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            animation: pulseGlow 2s infinite;
-        }
-
-        @keyframes pulseGlow {
-            0% { transform: scale(1); opacity: 0.6; }
-            100% { transform: scale(1.25); opacity: 0; }
+        @keyframes softPulse {
+            0%, 100% { box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 12px 32px rgba(16, 185, 129, 0.7); }
         }
 
         #noBtn {
             background: rgba(255, 255, 255, 0.08);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            z-index: 5;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            color: #f1f5f9;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 10;
+            backdrop-filter: blur(10px);
         }
 
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 6, 23, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(4, 7, 15, 0.85);
+            backdrop-filter: blur(16px);
             z-index: 100;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         .modal-content {
-            background: linear-gradient(135deg, #1e1b4b, #0f172a);
-            border: 1px solid rgba(168, 85, 247, 0.4);
-            padding: 45px;
-            border-radius: 40px;
-            max-width: 460px;
-            width: 88%;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.9), 0 0 40px rgba(168,85,247,0.2);
-            transform: scale(0.85);
-            animation: modalPop 0.5s cubic-bezier(0.34, 1.7, 0.64, 1) forwards;
+            background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 32px 24px;
+            border-radius: 32px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+            animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
-        @keyframes modalPop { to { transform: scale(1); } }
-
-        .modal-content h3 { color: #ffd700; margin-bottom: 15px; font-size: 24px; font-weight: 700; }
-        .modal-content p { line-height: 1.6; color: #cbd5e1; font-size: 16px; margin-bottom: 8px; }
-        .modal-content .sub-text { font-size: 14px; color: #94a3b8; margin-bottom: 20px; }
-        .modal-content button { 
-            background: #ffd700; color: #0f172a; padding: 15px 40px; font-size: 17px; 
-            margin-top: 15px; border-radius: 50px; border: none; font-weight: 700;
-            cursor: pointer; box-shadow: 0 10px 25px rgba(255, 215, 0, 0.5);
-            font-family: 'Comfortaa', cursive, sans-serif;
-        }
-
-        .success-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-            display: inline-block;
-            filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.8));
-            animation: floatAnimation 2s ease-in-out infinite;
-        }
-
-        @keyframes floatAnimation {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-15px) rotate(3deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
+        @keyframes modalPop { 
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; } 
         }
     </style>
 </head>
@@ -211,256 +277,242 @@
 
     <div class="card" id="mainCard">
         <div class="card-content" id="cardContent">
-            <h1 id="question">У мене є до тебе важливе питання... ✨</h1>
             
-            <div class="buttons-sandbox" id="sandbox">
-                <button class="option-btn" id="yesBtn" onclick="sayYes()">Так! 🔥</button>
-                <button class="option-btn" id="noBtn" onmouseover="handleEscape(event)" ontouchstart="handleEscape(event)" onclick="hitNo()">Ні</button>
+            <div id="stepAuth">
+                <span class="badge">Запрошення 💌</span>
+                <h1>Привіт! 👋<br>Заповни картку для входу</h1>
+                <p class="subtitle">Це займе лише секунду, щоб дізнатися деталі</p>
+
+                <form class="auth-form" id="authForm">
+                    <div class="input-group">
+                        <label for="userName">Як тебе звати?</label>
+                        <input type="text" id="userName" placeholder="Твоє ім'я" required autocomplete="off" maxlength="40">
+                    </div>
+                    <div class="input-group">
+                        <label for="userTg">Твій контакт</label>
+                        <input type="text" id="userTg" placeholder="Telegram (@username)" required autocomplete="off" maxlength="40">
+                    </div>
+                    <button type="submit" class="auth-btn" id="authBtn">Дізнатися секрет 🚀</button>
+                </form>
             </div>
+
+            <div id="stepQuestion" style="display: none;">
+                <span class="badge">Запрошення на вальс 💃🕺</span>
+                <h1 id="question">Будеш танцювати вальс зі мною, Максимом Звягінцевим? ✨</h1>
+                <div class="escape-counter" id="escapeCounter">Тисни відповідь нижче 👇</div>
+                
+                <div class="buttons-sandbox" id="sandbox">
+                    <button class="option-btn" id="yesBtn">Так, з радістю! 🔥</button>
+                    <button class="option-btn" id="noBtn">Ні 🙈</button>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <!-- Модальне вікно після 5 відмов -->
     <div class="modal" id="errorModal">
-        <div class="modal-content">
-            <h3>Погано, що ми не будемо разом... 💔</h3>
-            <p>Ну ладно, бувай... 👋</p>
-            <p class="sub-text">Але ти завжди можеш перезайти на сайт і обрати "Так!", красотка! 😉</p>
-            <button onclick="closeModal()">Закрити</button>
+        <div class="modal-content" id="modalBox">
+            <div style="font-size: 50px; margin-bottom: 10px;">🥺💔</div>
+            <h3 style="color: #fde047; margin-bottom: 10px; font-size: 22px; font-family: 'Comfortaa';">Ех, шкода...</h3>
+            <p style="color: #cbd5e1; font-size: 14px; margin-bottom: 22px; line-height: 1.5;">
+                Але дякую за щирість! Натисни кнопку, щоб передати відповідь.
+            </p>
+            <button class="send-action-btn" id="sendNoBtn">Надіслати відповідь 📤</button>
         </div>
     </div>
 
     <script>
         const WEB3FORMS_KEY = '0a86cff4-07f0-4945-807a-b4610e623788'; 
 
+        let userData = { name: 'Анонім', tg: 'Не вказано' };
         let noClickCount = 0;
         let noScale = 1;
         let yesScale = 1;
-        
-        let audioCtx = null;
-        let ambientOsc = null;
-        let ambientGain = null;
+        let lastEscapeTime = 0;
+        let isSubmitting = false;
 
         const noPhrases = [
-            "Ну давай так 🥺",
-            "Ну будь ласка, так! 🙏",
-            "Ну благаю, так! ❤️",
-            "Ну давай так, а не ні! ✨",
-            "Я з тобою дуже хочу! 🔥"
+            "Ей, ти куди? 🥺",
+            "Подумай ще раз! 🙏",
+            "Ну будь ласочка! ❤️",
+            "Ти впевнена?! 😱",
+            "Останній шанс! ✨"
         ];
 
-        function initAudioEngine() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                ambientOsc = audioCtx.createOscillator();
-                ambientGain = audioCtx.createGain();
-                ambientOsc.type = 'triangle';
-                ambientOsc.frequency.setValueAtTime(146.83, audioCtx.currentTime); 
-                ambientGain.gain.setValueAtTime(0, audioCtx.currentTime);
-                ambientGain.linearRampToValueAtTime(0.03, audioCtx.currentTime + 2.0);
-                ambientOsc.connect(ambientGain);
-                ambientGain.connect(audioCtx.destination);
-                ambientOsc.start();
+        const noTones = [
+            { bg: 'rgba(239, 68, 68, 0.35)', border: 'rgba(239, 68, 68, 0.7)' },
+            { bg: 'rgba(220, 38, 38, 0.55)', border: 'rgba(220, 38, 38, 0.85)' },
+            { bg: 'rgba(185, 28, 28, 0.75)', border: '#f87171' },
+            { bg: 'rgba(153, 27, 27, 0.95)', border: '#fca5a5' }
+        ];
+
+        function escapeHTML(str) {
+            return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+        }
+
+        function generateBackgroundStars() {
+            const container = document.getElementById('sparklesBg');
+            const count = 25; 
+            const fragment = document.createDocumentFragment();
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2.5 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+                fragment.appendChild(star);
+            }
+            container.appendChild(fragment);
+        }
+
+        async function sendNotification(subject, message) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+            try {
+                const res = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    signal: controller.signal,
+                    body: JSON.stringify({
+                        access_key: WEB3FORMS_KEY,
+                        subject: subject,
+                        message: `👤 Ім'я: ${userData.name}\n📱 Telegram: ${userData.tg}\n\n📝 Деталі: ${message}`
+                    })
+                });
+                clearTimeout(timeoutId);
+                return res.ok;
+            } catch (err) {
+                console.error('Помилка відправки:', err);
+                return false;
             }
         }
 
-        function playEscapeSound() {
-            initAudioEngine();
-            if (!audioCtx) return;
+        function startSurvey(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('userName').value.trim();
+            const tgInput = document.getElementById('userTg').value.trim();
 
-            let time = audioCtx.currentTime;
-            let osc1 = audioCtx.createOscillator();
-            let osc2 = audioCtx.createOscillator();
-            let gainNode = audioCtx.createGain();
+            if (!nameInput || !tgInput) return;
 
-            osc1.type = 'sine';
-            osc1.frequency.setValueAtTime(350, time);
-            osc1.frequency.exponentialRampToValueAtTime(950, time + 0.12);
+            userData.name = nameInput;
+            userData.tg = tgInput.startsWith('@') ? tgInput : '@' + tgInput;
 
-            osc2.type = 'triangle';
-            osc2.frequency.setValueAtTime(355, time);
-            osc2.frequency.exponentialRampToValueAtTime(960, time + 0.12);
+            const cardContent = document.getElementById('cardContent');
+            cardContent.style.opacity = '0';
 
-            gainNode.gain.setValueAtTime(0.1, time);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+            setTimeout(() => {
+                document.getElementById('stepAuth').style.display = 'none';
+                document.getElementById('stepQuestion').style.display = 'block';
+                cardContent.style.opacity = '1';
 
-            osc1.connect(gainNode);
-            osc2.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            osc1.start(time);
-            osc2.start(time);
-            osc1.stop(time + 0.12);
-            osc2.stop(time + 0.12);
-        }
-
-        function playSuccessMelody() {
-            initAudioEngine(); 
-            if (!audioCtx) return;
-
-            if (ambientGain) {
-                ambientGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.4);
-                setTimeout(() => {
-                    if (ambientOsc) {
-                        ambientOsc.stop();
-                        ambientOsc.disconnect();
-                    }
-                }, 500);
-            }
-            
-            const melody = [587.33, 739.99, 880.00, 1174.66, 1479.98]; 
-            melody.forEach((freq, index) => {
-                setTimeout(() => {
-                    let osc = audioCtx.createOscillator();
-                    let gain = audioCtx.createGain();
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start();
-                    osc.stop(audioCtx.currentTime + 0.8);
-                }, index * 75);
-            });
-        }
-
-        document.addEventListener('mousemove', (e) => {
-            const xPercent = (e.clientX / window.innerWidth) * 100;
-            const yPercent = (e.clientY / window.innerHeight) * 100;
-            document.documentElement.style.setProperty('--glow-x', `${xPercent}%`);
-            document.documentElement.style.setProperty('--glow-y', `${yPercent}%`);
-        });
-
-        document.addEventListener('touchmove', (e) => {
-            if(e.touches.length > 0) {
-                const xPercent = (e.touches[0].clientX / window.innerWidth) * 100;
-                const yPercent = (e.touches[0].clientY / window.innerHeight) * 100;
-                document.documentElement.style.setProperty('--glow-x', `${xPercent}%`);
-                document.documentElement.style.setProperty('--glow-y', `${yPercent}%`);
-            }
-        });
-
-        function createBackgroundSparkles() {
-            const bg = document.getElementById('sparklesBg');
-            setInterval(() => {
-                const sparkle = document.createElement('div');
-                sparkle.classList.add('floating-sparkle');
-                sparkle.innerText = ['⚡', '✦', '🚀', '✨', '💖'][Math.floor(Math.random() * 5)];
-                sparkle.style.left = Math.random() * 100 + 'vw';
-                sparkle.style.animationDuration = (Math.random() * 2 + 4) + 's';
-                sparkle.style.fontSize = (Math.random() * 14 + 14) + 'px';
-                if(Math.random() > 0.5) {
-                    sparkle.style.color = 'rgba(56, 189, 248, 0.5)';
-                    sparkle.style.filter = 'blur(0.5px) drop-shadow(0 0 10px rgba(56, 189, 248, 0.7))';
-                }
-                bg.appendChild(sparkle);
-                setTimeout(() => sparkle.remove(), 6000);
-            }, 180);
-        }
-
-        function handleEscape(e) {
-            if (noClickCount >= 5) {
-                if (e.type === 'touchstart') {
-                    e.preventDefault();
-                    hitNo();
-                }
-                return;
-            }
-            if (e.type === 'touchstart') {
-                e.preventDefault(); 
-            }
-            hitNo();
+                requestAnimationFrame(() => {
+                    initPositions();
+                });
+            }, 250);
         }
 
         function moveButton() {
-            playEscapeSound();
             const noBtn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
             const sandbox = document.getElementById('sandbox');
+            const counterEl = document.getElementById('escapeCounter');
 
-            if (noClickCount <= noPhrases.length) {
-                noBtn.innerText = noPhrases[noClickCount - 1];
+            counterEl.innerText = `Спроба втечі: ${noClickCount} з 5 😈`;
 
-                noScale = Math.max(0.6, noScale - 0.08);
-                yesScale = Math.min(2.0, yesScale + 0.15); 
+            const phraseIndex = Math.min(noClickCount - 1, noPhrases.length - 1);
+            noBtn.innerText = noPhrases[phraseIndex];
 
-                noBtn.style.transform = `scale(${noScale})`;
-                yesBtn.style.transform = `scale(${yesScale})`;
+            const toneIndex = Math.min(noClickCount - 1, noTones.length - 1);
+            if (toneIndex >= 0) {
+                noBtn.style.background = noTones[toneIndex].bg;
+                noBtn.style.borderColor = noTones[toneIndex].border;
+            }
 
-                const noW = noBtn.offsetWidth;
-                const noH = noBtn.offsetHeight;
-                const visualNoW = noW * noScale;
-                const visualNoH = noH * noScale;
+            noScale = Math.max(0.65, noScale - 0.06);
+            yesScale = Math.min(1.45, yesScale + 0.08); 
 
-                const edgePadding = 15;
-                const minUnscaledX = edgePadding - (noW - visualNoW) / 2;
-                const maxUnscaledX = sandbox.clientWidth - visualNoW - edgePadding - (noW - visualNoW) / 2;
-                const minUnscaledY = edgePadding - (noH - visualNoH) / 2;
-                const maxUnscaledY = sandbox.clientHeight - visualNoH - edgePadding - (noH - visualNoH) / 2;
+            noBtn.style.transform = `scale(${noScale})`;
+            yesBtn.style.transform = `scale(${yesScale})`;
 
-                let rangeX = maxUnscaledX - minUnscaledX;
-                let rangeY = maxUnscaledY - minUnscaledY;
-                if (rangeX <= 0) rangeX = 10;
-                if (rangeY <= 0) rangeY = 10;
+            const padding = 12; 
+            const yesRect = {
+                left: yesBtn.offsetLeft - (yesBtn.offsetWidth * (yesScale - 1) / 2),
+                top: yesBtn.offsetTop - (yesBtn.offsetHeight * (yesScale - 1) / 2),
+                width: yesBtn.offsetWidth * yesScale,
+                height: yesBtn.offsetHeight * yesScale
+            };
 
-                const yesRect = {
-                    left: yesBtn.offsetLeft - (yesBtn.offsetWidth * (yesScale - 1) / 2),
-                    top: yesBtn.offsetTop - (yesBtn.offsetHeight * (yesScale - 1) / 2),
-                    width: yesBtn.offsetWidth * yesScale,
-                    height: yesBtn.offsetHeight * yesScale
+            const unscaledNoW = noBtn.offsetWidth;
+            const unscaledNoH = noBtn.offsetHeight;
+            const visualNoW = unscaledNoW * noScale;
+            const visualNoH = unscaledNoH * noScale;
+
+            const minX = 8;
+            const maxX = sandbox.clientWidth - visualNoW - 8;
+            const minY = 8;
+            const maxY = sandbox.clientHeight - visualNoH - 8;
+
+            let validX = minX;
+            let validY = minY;
+            let found = false;
+            let attempts = 0;
+
+            while (!found && attempts < 100) {
+                attempts++;
+                const candX = minX + Math.random() * Math.max(0, maxX - minX);
+                const candY = minY + Math.random() * Math.max(0, maxY - minY);
+
+                const candRect = {
+                    left: candX,
+                    top: candY,
+                    right: candX + visualNoW,
+                    bottom: candY + visualNoH
                 };
 
-                let randomX, randomY;
-                let isValidPosition = false;
-                let safetyCounter = 0;
+                const yesRight = yesRect.left + yesRect.width;
+                const yesBottom = yesRect.top + yesRect.height;
 
-                while (!isValidPosition && safetyCounter < 200) {
-                    randomX = minUnscaledX + Math.random() * rangeX;
-                    randomY = minUnscaledY + Math.random() * rangeY;
+                const overlaps = !(
+                    candRect.right + padding < yesRect.left ||
+                    candRect.left - padding > yesRight ||
+                    candRect.bottom + padding < yesRect.top ||
+                    candRect.top - padding > yesBottom
+                );
 
-                    const visualLeft = randomX + (noW - visualNoW) / 2;
-                    const visualTop = randomY + (noH - visualNoH) / 2;
-
-                    const overlapX = (visualLeft < yesRect.left + yesRect.width + 15) && (visualLeft + visualNoW > yesRect.left - 15);
-                    const overlapY = (visualTop < yesRect.top + yesRect.height + 15) && (visualTop + visualNoH > yesRect.top - 15);
-
-                    if (!overlapX || !overlapY) {
-                        isValidPosition = true;
-                    }
-                    safetyCounter++;
+                if (!overlaps) {
+                    validX = candX;
+                    validY = candY;
+                    found = true;
                 }
-
-                noBtn.style.left = randomX + 'px';
-                noBtn.style.top = randomY + 'px';
             }
+
+            if (!found) {
+                validY = yesRect.top > sandbox.clientHeight / 2 ? 10 : sandbox.clientHeight - visualNoH - 10;
+                validX = 10;
+            }
+
+            const offsetX = (unscaledNoW - visualNoW) / 2;
+            const offsetY = (unscaledNoH - visualNoH) / 2;
+
+            noBtn.style.left = (validX + offsetX) + 'px';
+            noBtn.style.top = (validY + offsetY) + 'px';
         }
 
-        function hitNo() {
+        function hitNo(e) {
+            const now = Date.now();
+            if (now - lastEscapeTime < 200) return; 
+            lastEscapeTime = now;
+
             noClickCount++;
             if (noClickCount >= 5) {
-                showErrorModal();
+                document.getElementById('errorModal').style.display = 'flex';
             } else {
                 moveButton();
             }
-        }
-
-        function showErrorModal() {
-            document.getElementById('errorModal').style.display = 'flex';
-            
-            fetch("https://api.web3forms.com/submit", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    access_key: WEB3FORMS_KEY,
-                    subject: "Результат: Вона відмовилась ❌",
-                    message: `Вона натиснула "Ні" ${noClickCount} разів і взагалі не захотіла обирати "Так".`
-                })
-            });
-        }
-
-        function closeModal() {
-            document.getElementById('errorModal').style.display = 'none';
         }
 
         function initPositions() {
@@ -471,107 +523,120 @@
             yesBtn.style.transform = 'scale(1)';
             noBtn.style.transform = 'scale(1)';
 
-            const gap = 20;
-            const totalWidth = yesBtn.offsetWidth + gap + noBtn.offsetWidth;
+            const sandboxWidth = sandbox.clientWidth || 340;
+            const yesW = yesBtn.offsetWidth || 130;
+            const noW = noBtn.offsetWidth || 90;
+            const gap = 14;
 
-            if (totalWidth < sandbox.clientWidth - 40) {
-                const startLeft = (sandbox.clientWidth - totalWidth) / 2;
-                const topPos = (sandbox.clientHeight - yesBtn.offsetHeight) / 2;
-                
-                yesBtn.style.left = startLeft + 'px';
-                yesBtn.style.top = topPos + 'px';
-                
-                noBtn.style.left = (startLeft + yesBtn.offsetWidth + gap) + 'px';
-                noBtn.style.top = topPos + 'px';
-            } else {
-                const leftYes = (sandbox.clientWidth - yesBtn.offsetWidth) / 2;
-                const leftNo = (sandbox.clientWidth - noBtn.offsetWidth) / 2;
-                const topYes = (sandbox.clientHeight - yesBtn.offsetHeight - noBtn.offsetHeight - gap) / 2;
-                
-                yesBtn.style.left = leftYes + 'px';
-                yesBtn.style.top = topYes + 'px';
-                
-                noBtn.style.left = leftNo + 'px';
-                noBtn.style.top = (topYes + yesBtn.offsetHeight + gap) + 'px';
-            }
-        }
+            const startLeft = Math.max(8, (sandboxWidth - (yesW + gap + noW)) / 2);
+            const topPos = Math.max(20, (sandbox.clientHeight - 48) / 2);
 
-        window.addEventListener('DOMContentLoaded', () => {
-            createBackgroundSparkles();
-            initPositions();
-        });
+            yesBtn.style.left = startLeft + 'px';
+            yesBtn.style.top = topPos + 'px';
 
-        window.addEventListener('resize', () => {
-            if (noClickCount === 0) {
-                initPositions();
-            }
-        });
-
-        function explodePremiumSparkles() {
-            const bg = document.getElementById('sparklesBg');
-            for(let i = 0; i < 90; i++) {
-                setTimeout(() => {
-                    const sparkle = document.createElement('div');
-                    sparkle.classList.add('floating-sparkle');
-                    sparkle.innerText = ['⚡', '🎉', '🌟', '💥', '🚀', '✨', '❤️'][Math.floor(Math.random() * 7)];
-                    sparkle.style.left = (Math.random() * 86 + 7) + 'vw';
-                    sparkle.style.bottom = '-30px';
-                    sparkle.style.animationDuration = (Math.random() * 1.3 + 1.2) + 's';
-                    sparkle.style.fontSize = (Math.random() * 28 + 18) + 'px';
-                    sparkle.style.color = 'rgba(255, 215, 0, 0.6)';
-                    sparkle.style.filter = 'blur(0.5px) drop-shadow(0 0 15px rgba(255, 215, 0, 0.8))';
-                    bg.appendChild(sparkle);
-                }, i * 15);
-            }
+            noBtn.style.left = (startLeft + yesW + gap) + 'px';
+            noBtn.style.top = topPos + 'px';
         }
 
         function sayYes() {
-            playSuccessMelody();
-            explodePremiumSparkles();
-            
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+            }
+
             const card = document.getElementById('mainCard');
             const content = document.getElementById('cardContent');
 
             content.style.opacity = '0';
-            content.style.transform = 'scale(0.85)';
 
             setTimeout(() => {
+                const safeName = escapeHTML(userData.name);
                 card.innerHTML = `
-                    <div style="animation: modalPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;">
-                        <div class="success-icon">✨❤️⚡</div>
-                        <h1 style="font-size: 26px; margin-bottom: 0; background: linear-gradient(135deg, #ffffff, #ffd700, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                            Молодець, що погодилась! Я тобі скоро напишу 😉✨
+                    <div style="animation: modalPop 0.4s ease forwards;">
+                        <div style="font-size: 60px; margin-bottom: 12px;">💫💖🎉</div>
+                        <span class="badge">Ура! Вона сказала ТАК! ✨</span>
+                        <h1 style="font-size: 22px; margin-top: 8px;">
+                            Супер, ${safeName}! Я зв'яжусь з тобою зовсім скоро 😉
                         </h1>
-                        <p style="color: #c084fc; font-size: 14px; margin-top: 35px; font-weight: 600; text-shadow: 0 0 15px rgba(168,85,247,0.5); letter-spacing: 0.5px;">
-                            🚀 Відповідь надіслано!
-                        </p>
+                        <div id="yesActionContainer" style="margin-top: 20px;">
+                            <button class="send-action-btn" id="submitYesBtn">Підтвердити 🚀</button>
+                        </div>
                     </div>
                 `;
-                card.style.borderColor = '#ffd700';
-                card.style.boxShadow = '0 40px 90px rgba(255, 215, 0, 0.35), 0 0 60px rgba(168, 85, 247, 0.2)';
-                card.style.transform = 'translateY(-5px)';
-            }, 450);
-
-            let attemptMessage = "";
-            if (noClickCount === 0) {
-                attemptMessage = "Вона одразу вибрала 'Так'! 🚀";
-            } else {
-                attemptMessage = `Вона вибрала 'Так' з ${noClickCount + 1}-ї спроби! 😉 (натиснула 'Ні' ${noClickCount} разів)`;
-            }
-
-            fetch('https://api.web3forms.com/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    access_key: WEB3FORMS_KEY,
-                    subject: "Результат: Вона відповіла ТАК! 🎉",
-                    message: attemptMessage
-                })
-            });
+                document.getElementById('submitYesBtn').addEventListener('click', submitYesAnswer);
+            }, 250);
         }
+
+        async function submitYesAnswer() {
+            if (isSubmitting) return;
+            isSubmitting = true;
+
+            const btn = document.getElementById('submitYesBtn');
+            btn.disabled = true;
+            btn.innerText = 'Надсилаємо... ⏳';
+
+            let msg = noClickCount === 0 
+                ? "Погодилася танцювати вальс одразу без вагань! 🔥" 
+                : `Погодилася танцювати вальс після ${noClickCount} спроб втечі! 😈`;
+
+            const success = await sendNotification("Результат: Вона танцює ВАЛЬС! 🎉💃", msg);
+            
+            if (success) {
+                document.getElementById('yesActionContainer').innerHTML = `
+                    <p style="color: #c084fc; font-size: 15px; margin-top: 15px; font-weight: 600;">
+                        ✅ Відповідь доставлено Максиму!
+                    </p>
+                `;
+            } else {
+                isSubmitting = false;
+                btn.disabled = false;
+                btn.innerText = 'Спробувати ще раз 🔄';
+                alert('Невдалося відправити повідомлення. Перевірте зʼєднання з інтернетом та спробуйте ще раз.');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            generateBackgroundStars();
+
+            document.getElementById('authForm').addEventListener('submit', startSurvey);
+            document.getElementById('yesBtn').addEventListener('click', sayYes);
+
+            const noBtn = document.getElementById('noBtn');
+            noBtn.addEventListener('mouseenter', hitNo);
+            noBtn.addEventListener('touchstart', (e) => { 
+                e.preventDefault(); 
+                hitNo(e); 
+            }, { passive: false });
+
+            const sendNoBtn = document.getElementById('sendNoBtn');
+            sendNoBtn.addEventListener('click', async () => {
+                if (isSubmitting) return;
+                isSubmitting = true;
+
+                sendNoBtn.disabled = true;
+                sendNoBtn.innerText = 'Надсилання... ⏳';
+
+                const success = await sendNotification("Результат: Фінальна відмова від вальсу 💔", `Відмова після ${noClickCount} спроб.`);
+                
+                if (success) {
+                    document.getElementById('modalBox').innerHTML = `
+                        <div style="font-size: 45px; margin-bottom: 8px;">🤝</div>
+                        <h3 style="font-family: 'Comfortaa'; color: #ffffff;">Дякую за відповідь!</h3>
+                        <p style="color: #94a3b8; margin-top: 8px; font-size: 14px;">Гарного тобі дня! ✨</p>
+                    `;
+                } else {
+                    isSubmitting = false;
+                    sendNoBtn.disabled = false;
+                    sendNoBtn.innerText = 'Спробувати ще раз 🔄';
+                    alert('Невдалося відправити повідомлення. Перевірте зʼєднання та спробуйте ще раз.');
+                }
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            if (noClickCount === 0 && document.getElementById('stepQuestion').style.display !== 'none') {
+                initPositions();
+            }
+        });
     </script>
 </body>
 </html>
