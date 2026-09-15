@@ -1,25 +1,233 @@
-fetch('https://api.web3forms.com/submit', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-        access_key: WEB3FORMS_KEY,
-        subject: `Відповідь на вальс від ${userData.name}! 🕺`,
-        message: `📌 Нова відповідь на запрошення:\n\n` +
-                 `👤 Ім'я: ${userData.name}\n` +
-                 `📱 Telegram: ${userData.tg}\n` +
-                 `❌ Натискань/спроб "Ні": ${noClicks}\n` +
-                 `✅ Фінальне рішення: ТАК`
-    })
-})
-.then(async (response) => {
-    const data = await response.json();
-    if (response.ok && data.success) {
-        console.log('Успішно відправлено!', data);
-    } else {
-        console.error('Помилка Web3Forms:', data);
-    }
-})
-.catch(error => console.error('Мережева помилка:', error));
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Запрошення на вальс</title>
+    <!-- Підключаємо бібліотеку для ефекту конфеті -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h2 {
+            color: #d63384;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 16px 0;
+            border: 2px solid #f8d7da;
+            border-radius: 10px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        input:focus {
+            border-color: #d63384;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit, .btn-yes {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-submit:hover, .btn-yes:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        .btn-no {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        #questionCard, #successCard {
+            display: none;
+        }
+
+        .emoji {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- КРОК 1: Форма вводу імені та контакту -->
+    <div class="card" id="formCard">
+        <div class="emoji">✨</div>
+        <h2>Вітаю!</h2>
+        <p>Будь ласка, відрекомендуйся перед тим, як продовжити:</p>
+        <br>
+        <input type="text" id="nameInput" placeholder="Твоє ім'я *" required>
+        <input type="text" id="tgInput" placeholder="Telegram або телефон (необов'язково)">
+        <button class="btn-submit" onclick="submitForm()">Далі ➡️</button>
+    </div>
+
+    <!-- КРОК 2: Запитання про вальс -->
+    <div class="card" id="questionCard">
+        <div class="emoji">💃🕺</div>
+        <h2 id="userGreeting">Підеш зі мною на вальс?</h2>
+        <div class="btn-group">
+            <button class="btn-yes" id="yesBtn" onclick="sayYes()">Так! ❤️</button>
+            <button class="btn-no" id="noBtn" onclick="sayNo()">Ні</button>
+        </div>
+    </div>
+
+    <!-- КРОК 3: Фінальний екран з подякою -->
+    <div class="card" id="successCard">
+        <div class="emoji">🎉</div>
+        <h2>Урааа! 🥳</h2>
+        <p>Я дуже радий! Готуйся до танцю, до зустрічі на паркеті! ✨</p>
+    </div>
+
+    <!-- ОСНОВНИЙ СКРИПТ ЛОГІКИ ТА ВІДПРАВКИ -->
+    <script>
+        // 🔑 Твій ключ з web3forms.com
+        const WEB3FORMS_KEY = 'ВСТАВ_СЮДИ_СВІЙ_КЛЮЧ';
+
+        let noClicks = 0;
+        let userData = { name: '', tg: '' };
+
+        const noButtonTexts = [
+            "Ти впевнена?",
+            "Точно ні?",
+            "Подумай ще раз!",
+            "Ну будь ласка 🥺",
+            "Зваж всі «за» і «проти»!",
+            "Може все ж «Так»?",
+            "Я тобі печиво куплю!",
+            "Останній шанс!"
+        ];
+
+        // 1. Збереження даних з першої форми
+        function submitForm() {
+            const nameInput = document.getElementById('nameInput');
+            const tgInput = document.getElementById('tgInput');
+
+            const name = nameInput ? nameInput.value.trim() : '';
+            const tg = tgInput ? tgInput.value.trim() : '';
+
+            if (!name) {
+                alert('Будь ласка, вкажи своє ім\'я!');
+                return;
+            }
+
+            userData.name = name;
+            userData.tg = tg || 'Не вказано';
+
+            document.getElementById('formCard').style.display = 'none';
+            document.getElementById('questionCard').style.display = 'block';
+
+            const greetingElement = document.getElementById('userGreeting');
+            if (greetingElement) {
+                greetingElement.textContent = `${userData.name}, підеш зі мною на вальс?`;
+            }
+        }
+
+        // 2. Логіка для кнопки "Ні"
+        function sayNo() {
+            noClicks++;
+
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+
+            const textIndex = Math.min(noClicks - 1, noButtonTexts.length - 1);
+            if (noBtn) noBtn.textContent = noButtonTexts[textIndex];
+
+            if (yesBtn) {
+                const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize) || 16;
+                yesBtn.style.fontSize = `${currentSize + 4}px`;
+                yesBtn.style.padding = `${10 + noClicks * 2}px ${20 + noClicks * 4}px`;
+            }
+        }
+
+        // 3. Логіка для кнопки "Так" та відправка запиту через fetch (Web3Forms API)
+        function sayYes() {
+            document.getElementById('questionCard').style.display = 'none';
+            document.getElementById('successCard').style.display = 'block';
+
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            }
+
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    access_key: WEB3FORMS_KEY,
+                    subject: `Відповідь на вальс від ${userData.name}! 🕺`,
+                    message: `📌 Нова відповідь на запрошення:\n\n` +
+                             `👤 Ім'я: ${userData.name}\n` +
+                             `📱 Контакт: ${userData.tg}\n` +
+                             `❌ Натискань "Ні": ${noClicks}\n` +
+                             `✅ Фінальне рішення: ТАК!`
+                })
+            })
+            .then(async (response) => {
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    console.log('✅ Лист успішно доставлено:', data);
+                } else {
+                    console.error('❌ Помилка Web3Forms:', data);
+                }
+            })
+            .catch(error => {
+                console.error('⚠️ Мережева помилка:', error);
+            });
+        }
+    </script>
+</body>
+</html>
