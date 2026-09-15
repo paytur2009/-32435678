@@ -21,6 +21,7 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
+            overflow: hidden;
         }
 
         .card {
@@ -31,6 +32,7 @@
             text-align: center;
             max-width: 400px;
             width: 100%;
+            position: relative;
         }
 
         h2 {
@@ -58,7 +60,7 @@
             align-items: center;
             gap: 15px;
             margin-top: 20px;
-            flex-wrap: wrap;
+            min-height: 60px;
         }
 
         button {
@@ -84,6 +86,7 @@
         .btn-no {
             background-color: #dc3545;
             color: white;
+            transition: top 0.3s ease, left 0.3s ease;
         }
 
         #questionCard, #successCard {
@@ -100,13 +103,15 @@
 
     <!-- КРОК 1: Форма вводу імені та контакту -->
     <div class="card" id="formCard">
-        <div class="emoji">✨</div>
-        <h2>Вітаю!</h2>
-        <p>Будь ласка, відрекомендуйся перед тим, як продовжити:</p>
-        <br>
-        <input type="text" id="nameInput" placeholder="Твоє ім'я *" required>
-        <input type="text" id="tgInput" placeholder="Telegram або телефон (необов'язково)">
-        <button class="btn-submit" onclick="submitForm()">Далі ➡️</button>
+        <form onsubmit="event.preventDefault(); submitForm();">
+            <div class="emoji">✨</div>
+            <h2>Вітаю!</h2>
+            <p>Будь ласка, відрекомендуйся перед тим, як продовжити:</p>
+            <br>
+            <input type="text" id="nameInput" placeholder="Твоє ім'я *" required>
+            <input type="text" id="tgInput" placeholder="Telegram або телефон (необов'язково)">
+            <button type="submit" class="btn-submit">Далі ➡️</button>
+        </form>
     </div>
 
     <!-- КРОК 2: Запитання про вальс -->
@@ -115,7 +120,7 @@
         <h2 id="userGreeting">Підеш зі мною на вальс?</h2>
         <div class="btn-group">
             <button class="btn-yes" id="yesBtn" onclick="sayYes()">Так! ❤️</button>
-            <button class="btn-no" id="noBtn" onclick="sayNo()">Ні</button>
+            <button class="btn-no" id="noBtn" onclick="sayNo()" onmouseover="moveNoButton()">Ні</button>
         </div>
     </div>
 
@@ -128,7 +133,7 @@
 
     <!-- ОСНОВНИЙ СКРИПТ ЛОГІКИ ТА ВІДПРАВКИ -->
     <script>
-        // 🔑 Твій ключ з web3forms.com
+        // 🔑 Твій ключ з web3forms.com (переконайся, що активував його на пошті!)
         const WEB3FORMS_KEY = 'ВСТАВ_СЮДИ_СВІЙ_КЛЮЧ';
 
         let noClicks = 0;
@@ -170,27 +175,51 @@
             }
         }
 
-        // 2. Логіка для кнопки "Ні"
+        // Функція для втікання кнопки "Ні"
+        function moveNoButton() {
+            const noBtn = document.getElementById('noBtn');
+            if (!noBtn) return;
+
+            noBtn.style.position = 'fixed';
+            
+            // Розраховуємо випадкові координати в межах вікна браузера
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 40) + 20;
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 40) + 20;
+
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+        }
+
+        // 2. Логіка при кліку на кнопку "Ні"
         function sayNo() {
             noClicks++;
 
             const noBtn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
 
+            // Змінюємо текст
             const textIndex = Math.min(noClicks - 1, noButtonTexts.length - 1);
             if (noBtn) noBtn.textContent = noButtonTexts[textIndex];
 
+            // Збільшуємо кнопку "Так"
             if (yesBtn) {
                 const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize) || 16;
-                yesBtn.style.fontSize = `${currentSize + 4}px`;
-                yesBtn.style.padding = `${10 + noClicks * 2}px ${20 + noClicks * 4}px`;
+                yesBtn.style.fontSize = `${currentSize + 3}px`;
+                yesBtn.style.padding = `${12 + noClicks * 2}px ${24 + noClicks * 3}px`;
             }
+
+            // Зміщуємо кнопку далі
+            moveNoButton();
         }
 
         // 3. Логіка для кнопки "Так" та відправка запиту через fetch (Web3Forms API)
         function sayYes() {
             document.getElementById('questionCard').style.display = 'none';
             document.getElementById('successCard').style.display = 'block';
+
+            // Приховуємо кнопку "Ні", якщо вона тікала по всьому екрану
+            const noBtn = document.getElementById('noBtn');
+            if (noBtn) noBtn.style.display = 'none';
 
             if (typeof confetti === 'function') {
                 confetti({
