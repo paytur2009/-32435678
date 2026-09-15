@@ -286,7 +286,7 @@
     <div class="modal" id="errorModal">
         <div class="modal-content">
             <h3>🤔 Треба подумати ще раз</h3>
-            <p>Ця кнопка занадто прудка, та й відмови не приймаються. Давай все ж спробуємо потанцювати? 😉</p>
+            <p>Ну ти й уперта особа! 😅 Але відмови не приймаються. Давай все ж спробуємо потанцювати?</p>
             <button onclick="closeModal()">Переконав, давай! ✨</button>
         </div>
     </div>
@@ -310,7 +310,7 @@
             "Буде ж круто, ну! 🔥",
             "А якщо добре подумати? 😉",
             "Давай без цього, погнали! 🚀",
-            "Здаюся, тисни «Так»! 🙌"
+            "Ну добре, натискай вже... 😅"
         ];
 
         function startSurvey(e) {
@@ -447,13 +447,11 @@
         }
 
         function handleEscape(e) {
-            if (attempts >= noPhrases.length) {
-                if (e.type === 'touchstart') {
-                    e.preventDefault();
-                    hitNo();
-                }
-                return;
+            // На останній фразі кнопка БІЛЬШЕ НЕ ТІКАЄ
+            if (attempts >= noPhrases.length - 1) {
+                return; 
             }
+
             if (e.type === 'touchstart') {
                 e.preventDefault(); 
             }
@@ -461,86 +459,66 @@
         }
 
         function moveButton() {
-            if (attempts >= noPhrases.length) return;
+            if (attempts >= noPhrases.length - 1) return;
 
             playEscapeSound();
             const noBtn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
             const sandbox = document.getElementById('sandbox');
 
-            if (attempts < noPhrases.length - 1) {
-                noBtn.innerText = noPhrases[attempts];
+            noBtn.innerText = noPhrases[attempts];
 
-                noScale = Math.max(0.6, noScale - 0.08);
-                yesScale = Math.min(2.2, yesScale + 0.15); 
+            noScale = Math.max(0.65, noScale - 0.07);
+            yesScale = Math.min(2.0, yesScale + 0.15); 
 
-                noBtn.style.transform = `scale(${noScale})`;
-                yesBtn.style.transform = `scale(${yesScale})`;
+            noBtn.style.transform = `scale(${noScale})`;
+            yesBtn.style.transform = `scale(${yesScale})`;
 
-                const noW = noBtn.offsetWidth;
-                const noH = noBtn.offsetHeight;
-                const visualNoW = noW * noScale;
-                const visualNoH = noH * noScale;
+            const noW = noBtn.offsetWidth;
+            const noH = noBtn.offsetHeight;
+            const visualNoW = noW * noScale;
+            const visualNoH = noH * noScale;
 
-                const edgePadding = 15;
-                const minUnscaledX = edgePadding - (noW - visualNoW) / 2;
-                const maxUnscaledX = sandbox.clientWidth - visualNoW - edgePadding - (noW - visualNoW) / 2;
-                const minUnscaledY = edgePadding - (noH - visualNoH) / 2;
-                const maxUnscaledY = sandbox.clientHeight - visualNoH - edgePadding - (noH - visualNoH) / 2;
+            const edgePadding = 15;
+            const minUnscaledX = edgePadding - (noW - visualNoW) / 2;
+            const maxUnscaledX = sandbox.clientWidth - visualNoW - edgePadding - (noW - visualNoW) / 2;
+            const minUnscaledY = edgePadding - (noH - visualNoH) / 2;
+            const maxUnscaledY = sandbox.clientHeight - visualNoH - edgePadding - (noH - visualNoH) / 2;
 
-                let rangeX = maxUnscaledX - minUnscaledX;
-                let rangeY = maxUnscaledY - minUnscaledY;
-                if (rangeX <= 0) rangeX = 10;
-                if (rangeY <= 0) rangeY = 10;
+            let rangeX = Math.max(10, maxUnscaledX - minUnscaledX);
+            let rangeY = Math.max(10, maxUnscaledY - minUnscaledY);
 
-                const yesRect = {
-                    left: yesBtn.offsetLeft - (yesBtn.offsetWidth * (yesScale - 1) / 2),
-                    top: yesBtn.offsetTop - (yesBtn.offsetHeight * (yesScale - 1) / 2),
-                    width: yesBtn.offsetWidth * yesScale,
-                    height: yesBtn.offsetHeight * yesScale
-                };
+            const yesRect = {
+                left: yesBtn.offsetLeft - (yesBtn.offsetWidth * (yesScale - 1) / 2),
+                top: yesBtn.offsetTop - (yesBtn.offsetHeight * (yesScale - 1) / 2),
+                width: yesBtn.offsetWidth * yesScale,
+                height: yesBtn.offsetHeight * yesScale
+            };
 
-                let randomX, randomY;
-                let isValidPosition = false;
-                let safetyCounter = 0;
+            let randomX, randomY;
+            let isValidPosition = false;
+            let safetyCounter = 0;
 
-                while (!isValidPosition && safetyCounter < 200) {
-                    randomX = minUnscaledX + Math.random() * rangeX;
-                    randomY = minUnscaledY + Math.random() * rangeY;
+            while (!isValidPosition && safetyCounter < 150) {
+                randomX = minUnscaledX + Math.random() * rangeX;
+                randomY = minUnscaledY + Math.random() * rangeY;
 
-                    const visualLeft = randomX + (noW - visualNoW) / 2;
-                    const visualTop = randomY + (noH - visualNoH) / 2;
+                const visualLeft = randomX + (noW - visualNoW) / 2;
+                const visualTop = randomY + (noH - visualNoH) / 2;
 
-                    const overlapX = (visualLeft < yesRect.left + yesRect.width + 15) && (visualLeft + visualNoW > yesRect.left - 15);
-                    const overlapY = (visualTop < yesRect.top + yesRect.height + 15) && (visualTop + visualNoH > yesRect.top - 15);
+                const overlapX = (visualLeft < yesRect.left + yesRect.width + 15) && (visualLeft + visualNoW > yesRect.left - 15);
+                const overlapY = (visualTop < yesRect.top + yesRect.height + 15) && (visualTop + visualNoH > yesRect.top - 15);
 
-                    if (!overlapX || !overlapY) {
-                        isValidPosition = true;
-                    }
-                    safetyCounter++;
+                if (!overlapX || !overlapY) {
+                    isValidPosition = true;
                 }
-
-                noBtn.style.left = randomX + 'px';
-                noBtn.style.top = randomY + 'px';
-
-                attempts++;
-            } else {
-                noScale = 0.55;
-                noBtn.innerText = noPhrases[noPhrases.length - 1];
-                noBtn.style.transform = `scale(${noScale})`;
-                yesBtn.style.transform = `scale(${yesScale})`;
-
-                const noW = noBtn.offsetWidth;
-                const noH = noBtn.offsetHeight;
-                
-                const posX = (sandbox.clientWidth - noW) / 2;
-                const posY = sandbox.clientHeight - (noH * noScale) - 10 - ((noH - noH * noScale) / 2);
-
-                noBtn.style.left = posX + 'px';
-                noBtn.style.top = posY + 'px';
-                
-                attempts++; 
+                safetyCounter++;
             }
+
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+
+            attempts++;
         }
 
         function initPositions() {
@@ -588,7 +566,8 @@
 
         function hitNo() {
             noClicks++;
-            if (attempts >= noPhrases.length) {
+            // Якщо це вже фінальний крок переконувань — відкриваємо модалку
+            if (attempts >= noPhrases.length - 1) {
                 document.getElementById('errorModal').style.display = 'flex';
             } else {
                 moveButton();
