@@ -259,7 +259,7 @@
     <div class="card" id="mainCard">
         <div class="card-content" id="cardContent">
             
-            <!-- КРОК 1: Форма входу -->
+            <!-- КРОК 1: Вхід -->
             <div id="stepAuth">
                 <h1>Привіт! 👋<br>Введи свої дані для входу</h1>
                 <form class="auth-form" onsubmit="startSurvey(event)">
@@ -269,7 +269,7 @@
                 </form>
             </div>
 
-            <!-- КРОК 2: Питання та кнопки -->
+            <!-- КРОК 2: Запрошення -->
             <div id="stepQuestion" style="display: none;">
                 <h1 id="question">Ти підеш зі мною вальс танцювати? 🕺✨</h1>
                 
@@ -291,14 +291,9 @@
     </div>
 
     <script>
-        // ВСТАВ СЮДИ СВІЙ ACCESS KEY З WEB3FORMS:
         const WEB3FORMS_KEY = 'e21f5deb-ba67-4522-af38-6e7e2692b9c7'; 
 
-        let userData = {
-            name: '',
-            tg: ''
-        };
-
+        let userData = { name: '', tg: '' };
         let attempts = 0;
         let noClicks = 0;
         let noScale = 1;
@@ -643,7 +638,6 @@
                 card.style.transform = 'translateY(-5px)';
             }, 450);
 
-            // Оновлений відправник запиту до Web3Forms API
             fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
                 headers: {
